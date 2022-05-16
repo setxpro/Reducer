@@ -1,25 +1,84 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FormEvent, useState } from 'react';
 
-function App() {
+import { usePeopleList } from './hooks/PeopleList';
+import { Container } from './styles/AppStyles';
+
+const App: React.FC = () => {
+
+  const [list, dispatch] = usePeopleList();
+  const [name, setName] = useState('');
+
+  function handleAdd(e: FormEvent) {
+    e.preventDefault();
+    if (name) {
+      dispatch({
+        type: 'ADD',
+        payload: {
+          name
+        }
+      })
+    }
+    setName('');
+  }
+
+  function handleDelete(id: string) {
+      dispatch({
+        type: 'DEL',
+        payload: {
+          id,
+        }
+      })
+  }
+
+  const handleOrder = () => {
+    dispatch({
+      type: 'ORDER',
+    })
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+ 
+      <div>
+
+      <form>
+        <input type="text" name="name" value={name} onChange={e => setName(e.target.value)}/>
+        <button onClick={handleAdd}>ADD</button>
+      </form>
+
+
+      </div>
+      
+
+      <div>
+        <table>
+        <button onClick={handleOrder}>ORDER</button>
+          <tr>
+            <th>#</th>
+            <th>NAME</th>
+            <th colSpan={2}>Actions</th>
+          </tr>
+          <>
+          {list.map((item, index) => (
+            <tr key={index}>
+              <td>
+                {item.id}
+              </td>
+              <td>
+                {item.name}
+              </td>
+              <td>
+                <button onClick={() => handleDelete(item.id)}>DELETE</button>
+              </td>
+              
+            </tr>
+          ))}
+          </>
+          
+        </table>
+      </div>
+     
+    </Container>
   );
 }
 
